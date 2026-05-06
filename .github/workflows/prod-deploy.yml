@@ -31,22 +31,15 @@ jobs:
         env:
           ECR_REPO_URL: ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}
         run: |
-          # 1. Clear out any temporary artifacts and seed the structural vars
-          # We write both ECR_REPO_URL and IMAGE_TAG so your compose file handles references cleanly
+  
           echo "ECR_REPO_URL=${ECR_REPO_URL}" > .env
           echo "IMAGE_TAG=latest" >> .env
 
-          # 2. Append your secure production app envs to the runtime profile
-          # This ensures your .env.prod contents are preserved alongside the image pointers
+      
           if [ -f .env.prod ]; then
             cat .env.prod >> .env
           fi
 
-          # 3. Pull the latest image variant compiled during the dev phase
           docker compose -f docker-compose.prod.yml pull
-
-          # 4. Bring down stale/orphaned configurations if they exist
-          docker compose -f docker-compose.prod.yml down --remove-orphans
-
-          # 5. Spin up the container on port 80, forcing recreation
+          docker compose -f docker-compose.prod.yml down --remove-orphan
           docker compose -f docker-compose.prod.yml up -d --force-recreate
