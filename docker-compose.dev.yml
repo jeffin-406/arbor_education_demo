@@ -1,0 +1,10 @@
+
+services:
+  web:
+    # Docker Compose reads the ECR_REPO_URL variable from the locally generated .env file
+    image: ${ECR_REPO_URL}:latest
+    ports:
+      - "8050:80"
+    env_file:
+      - .env.dev
+    restart: always
