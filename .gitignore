@@ -8,7 +8,8 @@ public/env-config.js
 
 
 
-# Terraform 
+# Terraform
+terra 
 .terraform/
 *.tfstate
 *.tfstate.backup
