@@ -1,145 +1,176 @@
 import React from 'react';
 
 function App() {
-  // Extract environment variables with safe defaults
+  // Extract configuration inputs injected via runtime assets (env.sh)
   const themeColor = window._env_?.COLOR || 'BLUE';
   const appEnv = window._env_?.APP_ENV || 'Development';
   const appName = window._env_?.APP_NAME || 'Student Major Project';
   const isDebug = window._env_?.DEBUG === 'true';
 
-  // Dynamic theme mapping based on your custom COLOR variable
-  const getThemeStyles = (color) => {
-    const normalize = color.toUpperCase();
-    if (normalize === 'BLUE') {
-      return {
-        bgGradient: 'linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%)',
-        accentColor: '#38bdf8',
-        glow: 'rgba(56, 189, 248, 0.15)',
-      };
+  /**
+   * Dynamic Runtime Theme Matrix
+   * Maps your .env file's COLOR variable directly to professional UI palettes
+   */
+  const getThemePalette = (colorConfig) => {
+    const activeColor = colorConfig.toUpperCase();
+
+    switch (activeColor) {
+      case 'BLUE':
+        return {
+          bgGradient: 'linear-gradient(135deg, #0b1528 0%, #0f2042 50%, #173161 100%)',
+          accent: '#38bdf8', // Vibrant Sky Cyan
+          glow: 'rgba(56, 189, 248, 0.25)',
+          mutedAccent: 'rgba(56, 189, 248, 0.1)',
+        };
+      case 'RED':
+        return {
+          bgGradient: 'linear-gradient(135deg, #1a0b0b 0%, #2e1212 50%, #4a1a1a 100%)',
+          accent: '#ef4444', // Premium Coral Crimson
+          glow: 'rgba(239, 68, 68, 0.25)',
+          mutedAccent: 'rgba(239, 68, 68, 0.1)',
+        };
+      case 'GREEN':
+        return {
+          bgGradient: 'linear-gradient(135deg, #06140e 0%, #0b2419 50%, #143d2b 100%)',
+          accent: '#10b981', // Neon Emerald
+          glow: 'rgba(16, 185, 129, 0.25)',
+          mutedAccent: 'rgba(16, 185, 129, 0.1)',
+        };
+      case 'PURPLE':
+        return {
+          bgGradient: 'linear-gradient(135deg, #12071f 0%, #210d37 50%, #361659 100%)',
+          accent: '#a855f7', // Electric Violet
+          glow: 'rgba(168, 85, 247, 0.25)',
+          mutedAccent: 'rgba(168, 85, 247, 0.1)',
+        };
+      case 'ORANGE':
+        return {
+          bgGradient: 'linear-gradient(135deg, #1c0f06 0%, #2f190a 50%, #4a2810 100%)',
+          accent: '#f97316', // Cyberpunk Amber
+          glow: 'rgba(249, 115, 22, 0.25)',
+          mutedAccent: 'rgba(249, 115, 22, 0.1)',
+        };
+      default: // System Fallback (Sleek Dark Slate)
+        return {
+          bgGradient: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)',
+          accent: '#f8fafc',
+          glow: 'rgba(248, 250, 252, 0.1)',
+          mutedAccent: 'rgba(255, 255, 255, 0.05)',
+        };
     }
-    if (normalize === 'RED') {
-      return {
-        bgGradient: 'linear-gradient(135deg, #1f0505 0%, #3d0b0b 50%, #611111 100%)',
-        accentColor: '#f87171',
-        glow: 'rgba(248, 113, 113, 0.15)',
-      };
-    }
-    // Universal fallback theme
-    return {
-      bgGradient: 'linear-gradient(135deg, #111827 0%, #1f2937 100%)',
-      accentColor: '#10b981',
-      glow: 'rgba(16, 185, 129, 0.15)',
-    };
   };
 
-  const theme = getThemeStyles(themeColor);
+  const theme = getThemePalette(themeColor);
 
-  // Structural Stylesheet
+  // Stylized Design Architecture Block
   const styles = {
-    container: {
+    viewport: {
       background: theme.bgGradient,
       minHeight: '100vh',
       display: 'flex',
       justifyContent: 'center',
       alignItems: 'center',
-      fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif',
-      color: '#f3f4f6',
+      fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+      color: '#f8fafc',
       margin: 0,
-      padding: '20px',
+      padding: '24px',
       boxSizing: 'border-box',
+      transition: 'background 0.5s ease-in-out', // Smooth shift if color changes
     },
-    card: {
-      background: 'rgba(255, 255, 255, 0.03)',
-      backdropFilter: 'blur(16px)',
-      WebkitBackdropFilter: 'blur(16px)',
-      border: '1px solid rgba(255, 255, 255, 0.08)',
-      borderRadius: '24px',
-      padding: '40px 60px',
+    dashboardCard: {
+      background: 'rgba(15, 23, 42, 0.45)',
+      backdropFilter: 'blur(20px)',
+      WebkitBackdropFilter: 'blur(20px)',
+      border: `1px solid rgba(255, 255, 255, 0.07)`,
+      borderRadius: '28px',
+      padding: '48px 56px',
       width: '100%',
-      maxWidth: '540px',
+      maxWidth: '500px',
       textAlign: 'center',
-      boxShadow: `0 20px 40px rgba(0, 0, 0, 0.3), 0 0 80px ${theme.glow}`,
-      transition: 'transform 0.3s ease',
+      boxShadow: `0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 60px ${theme.glow}`,
     },
-    header: {
-      fontSize: '2rem',
+    appHeading: {
+      fontSize: '2.25rem',
       fontWeight: '800',
-      letterSpacing: '-0.025em',
-      marginBottom: '12px',
-      background: 'linear-gradient(to right, #ffffff, #d1d5db)',
+      letterSpacing: '-0.03em',
+      marginBottom: '16px',
+      background: 'linear-gradient(180deg, #ffffff 0%, #cbd5e1 100%)',
       WebkitBackgroundClip: 'text',
       WebkitTextFillColor: 'transparent',
     },
-    divider: {
-      height: '1px',
-      background: 'linear-gradient(to right, transparent, rgba(255,255,255,0.15), transparent)',
-      border: 'none',
-      margin: '24px 0',
-    },
-    badgeContainer: {
+    badgeWrapper: {
       display: 'flex',
       justifyContent: 'center',
-      gap: '12px',
-      marginBottom: '24px',
+      gap: '14px',
+      marginBottom: '32px',
       flexWrap: 'wrap',
     },
-    badge: {
-      padding: '6px 16px',
-      borderRadius: '9999px',
-      fontSize: '0.85rem',
-      fontWeight: '600',
-      letterSpacing: '0.05em',
+    baseBadge: {
+      padding: '8px 18px',
+      borderRadius: '100px',
+      fontSize: '0.8rem',
+      fontWeight: '700',
+      letterSpacing: '0.06em',
       textTransform: 'uppercase',
       display: 'inline-flex',
       alignItems: 'center',
+      backdropFilter: 'blur(4px)',
     },
-    envBadge: {
-      background: 'rgba(255, 255, 255, 0.08)',
-      border: `1px solid ${theme.accentColor}`,
-      color: theme.accentColor,
+    environmentBadge: {
+      background: theme.mutedAccent,
+      border: `1px solid ${theme.accent}`,
+      color: theme.accent,
+      boxShadow: `0 0 15px ${theme.mutedAccent}`,
     },
-    debugBadge: {
-      background: isDebug ? 'rgba(234, 179, 8, 0.1)' : 'rgba(255, 255, 255, 0.04)',
-      border: isDebug ? '1px solid #eab308' : '1px solid rgba(255, 255, 255, 0.1)',
-      color: isDebug ? '#facc15' : '#9ca3af',
+    debugStatusBadge: {
+      background: isDebug ? 'rgba(234, 179, 8, 0.07)' : 'rgba(255, 255, 255, 0.03)',
+      border: isDebug ? '1px solid #eab308' : '1px solid rgba(255, 255, 255, 0.08)',
+      color: isDebug ? '#facc15' : '#94a3b8',
     },
-    footerText: {
-      fontSize: '0.9rem',
-      color: '#9ca3af',
-      lineHeight: '1.5',
-    },
-    statusDot: {
-      width: '8px',
-      height: '8px',
+    livePulseIndicator: {
+      width: '7px',
+      height: '7px',
       borderRadius: '50%',
-      backgroundColor: theme.accentColor,
+      backgroundColor: theme.accent,
       display: 'inline-block',
-      marginRight: '8px',
-      boxShadow: `0 0 10px ${theme.accentColor}`,
+      marginRight: '10px',
+      boxShadow: `0 0 12px ${theme.accent}`,
+    },
+    decorativeLine: {
+      height: '1px',
+      background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.12), transparent)',
+      border: 'none',
+      margin: '28px 0',
+    },
+    descriptionText: {
+      fontSize: '0.95rem',
+      color: '#94a3b8',
+      lineHeight: '1.7',
+      fontWeight: '400',
     }
   };
 
   return (
-    <div style={styles.container}>
-      <div style={styles.card}>
-        {/* Application Title */}
-        <h1 style={styles.header}>{appName}</h1>
+    <div style={styles.viewport}>
+      <div style={styles.dashboardCard}>
+        {/* Dynamic Project Title */}
+        <h1 style={styles.appHeading}>{appName}</h1>
         
-        {/* Environment Profile Badges */}
-        <div style={styles.badgeContainer}>
-          <div style={{ ...styles.badge, ...styles.envBadge }}>
-            <span style={styles.statusDot}></span>
+        {/* Context-Aware Metric Badges */}
+        <div style={styles.badgeWrapper}>
+          <div style={{ ...styles.baseBadge, ...styles.environmentBadge }}>
+            <span style={styles.livePulseIndicator}></span>
             {appEnv}
           </div>
-          <div style={{ ...styles.badge, ...styles.debugBadge }}>
+          <div style={{ ...styles.baseBadge, ...styles.debugStatusBadge }}>
             DEBUG: {isDebug ? 'ACTIVE' : 'OFF'}
           </div>
         </div>
 
-        <hr style={styles.divider} />
+        <hr style={styles.decorativeLine} />
 
         {/* Informational Subtext */}
-        <p style={styles.footerText}>
+        <p style={styles.descriptionText}>
           Automated deployment successfully verified. Static configuration layers compiled and injected natively via Docker pipeline asset streams.
         </p>
       </div>
