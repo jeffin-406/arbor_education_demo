@@ -2,7 +2,7 @@
 node_modules/
 
 # System Environment Files
-.env*
+
 !/env.sh
 public/env-config.js
 
@@ -10,9 +10,4 @@ public/env-config.js
 
 # Terraform
 terra 
-.terraform/
-*.tfstate
-*.tfstate.backup
-*.tfvars
-*.tfvars.json
-.terraform.lock.hcli
+
