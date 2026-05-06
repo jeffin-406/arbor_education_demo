@@ -1,0 +1,73 @@
+name: Build, Push to ECR, and Deploy
+
+on:
+  push:
+    branches: [ dev ]
+
+env:
+  AWS_REGION: ap-south-1
+  ECR_REPOSITORY: jeffin/student-major-project
+
+jobs:
+  build-and-push:
+    name: Build and Push
+    runs-on: [self-hosted, runner_dev]
+    outputs:
+      registry: ${{ steps.login-ecr.outputs.registry }}
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build, Tag, and Push Image
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          IMAGE_TAG: latest
+        run: |
+          docker build -t $ECR_REGISTRY/${{ env.ECR_REPOSITORY }}:$IMAGE_TAG .
+          docker push $ECR_REGISTRY/${{ env.ECR_REPOSITORY }}:$IMAGE_TAG
+
+  deploy-to-dev:
+    name: Deploy Container via Docker Compose
+    needs: build-and-push
+    runs-on: [self-hosted, runner_dev]
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Deploy with Docker Compose
+        env:
+          ECR_REPO_URL: ${{ needs.build-and-push.outputs.registry }}/${{ env.ECR_REPOSITORY }}
+        run: |
+          # 1. Permanently write the variable to .env so Docker Compose can pick it up natively
+          echo "ECR_REPO_URL=${ECR_REPO_URL}" > .env
+          
+          # 2. Pull the latest image from AWS ECR
+          docker compose -f docker-compose.dev.yml pull
+          
+          # 3. Bring down stale/orphaned configurations if they exist
+          docker compose -f docker-compose.dev.yml down --remove-orphans
+          
+          # 4. Spin up the container, forcing recreation to lock in port 8050
+          docker compose -f docker-compose.dev.yml up -d --force-recreate
