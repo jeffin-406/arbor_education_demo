@@ -16,9 +16,9 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-     - name: Create .env.dev from Secret
+      - name: Create .env.dev from Secret
         run: |
-          echo "${{ secrets.ENV_PROD }}" > .env.dev
+          echo "${{ secrets.ENV_PROD }}" > .env.prod
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
