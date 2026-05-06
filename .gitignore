@@ -5,7 +5,7 @@ node_modules/
 
 !/env.sh
 public/env-config.js
-
+.env*
 
 
 # Terraform
