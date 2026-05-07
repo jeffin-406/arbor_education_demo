@@ -34,6 +34,7 @@ jobs:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           IMAGE_TAG: latest
         run: |
+          # The Dockerfile will now find the .env.dev file created in the previous step
           docker build -t $ECR_REGISTRY/${{ env.ECR_REPOSITORY }}:$IMAGE_TAG .
           docker push $ECR_REGISTRY/${{ env.ECR_REPOSITORY }}:$IMAGE_TAG
 
@@ -41,10 +42,13 @@ jobs:
     name: Deploy Container via Docker Compose
     needs: build-and-push
     runs-on: [self-hosted, runner_dev]
-
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
+
+      - name: Create .env.dev from Secret
+        run: |
+          echo "${{ secrets.ENV_DEV }}" > .env.dev
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
@@ -57,15 +61,14 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
 
-      - name: Create .env.prod from Secret
-        run: |
-          echo "${{ secrets.ENV_DEV }}" > .env.dev
-
       - name: Deploy with Docker Compose
         env:
           ECR_REPO_URL: ${{ needs.build-and-push.outputs.registry }}/${{ env.ECR_REPOSITORY }}
         run: |
+  
           echo "ECR_REPO_URL=${ECR_REPO_URL}" > .env
+          
           docker compose -f docker-compose.dev.yml pull
           docker compose -f docker-compose.dev.yml down --remove-orphans
           docker compose -f docker-compose.dev.yml up -d --force-recreate
+        
