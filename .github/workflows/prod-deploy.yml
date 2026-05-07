@@ -16,7 +16,7 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Create .env.dev from Secret
+      - name: Create .env.prod from Secret
         run: |
           echo "${{ secrets.ENV_PROD }}" > .env.prod
 
