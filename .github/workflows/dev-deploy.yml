@@ -41,6 +41,7 @@ jobs:
     name: Deploy Container via Docker Compose
     needs: build-and-push
     runs-on: [self-hosted, runner_dev]
+
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -55,6 +56,10 @@ jobs:
       - name: Login to Amazon ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Create .env.prod from Secret
+        run: |
+          echo "${{ secrets.ENV_DEV }}" > .env.dev
 
       - name: Deploy with Docker Compose
         env:
