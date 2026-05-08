@@ -4,7 +4,7 @@ This repository hosts the complete infrastructure engineering code for a product
 i
 ---
 
-## 🚀 Architectural Design Highlight
+## 🚀 Architectural Design High
 
 * **Build Once, Deploy Many:** Container image footprints are compiled exactly *once* during development pipelines and seamlessly promoted directly into production servers. This removes ambient environment drift risk and cuts redundant continuous integration compute overhead.
 * **Decoupled Runtime Injection (`env.sh`):** Resolves the classic client-side SPA variable baking dilemma. Operating system layer variables are converted dynamically into web-browser consumable objects inside the Nginx container workspace at launch initialization.
