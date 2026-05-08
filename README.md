@@ -24,4 +24,4 @@ The pipeline data structure processes code changes systematically across isolate
             │     └──► Job 2: Download Image via Compose ──► Deploy Dev EC2 (:Port 8050)
             │
             └──► Merge to 'main' branch
-                  └──► Direct CD Script Sequence ──► Pull from ECR ──► Deploy Prod EC2 (:Port 80)
+                  └──► Direct CD Script Sequence ──► Pull from ECR ──► Deploy Prod EC2 (:Port 80)}
